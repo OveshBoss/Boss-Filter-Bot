@@ -83,90 +83,78 @@ async def start(client, message):
         return         
     if message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
         buttons = [[
-                    InlineKeyboardButton('❤️ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ ❤️', url=f'http://t.me/{temp.U_NAME}?startgroup=true')
-                ],[
-                    InlineKeyboardButton('🍁 Update Channel 🍁', url=UPDATE_CHNL_LNK)
-                  ]]
-        reply_markup = InlineKeyboardMarkup(buttons)
-        await message.reply(script.GSTART_TXT.format(message.from_user.mention if message.from_user else message.chat.title, temp.U_NAME, temp.B_NAME), reply_markup=reply_markup, disable_web_page_preview=True)
-        await asyncio.sleep(2) 
-        if not await db.get_chat(message.chat.id):
-            total=await client.get_chat_members_count(message.chat.id)
-            await client.send_message(LOG_CHANNEL, script.LOG_TEXT_G.format(message.chat.title, message.chat.id, total, "Unknown"))       
-            await db.add_chat(message.chat.id, message.chat.title)
-        return 
-    if not await db.is_user_exist(message.from_user.id):
-        await db.add_user(message.from_user.id, message.from_user.first_name)
-        await client.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(message.from_user.id, message.from_user.mention))
-    if len(message.command) != 2:
-        buttons = [[
-                    InlineKeyboardButton('✦ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ ✦', url=f'http://t.me/{temp.U_NAME}?startgroup=true')
-                ],[
-                    InlineKeyboardButton('  ✪ ɢʀᴏᴜᴘ ✪ ', url=https://t.me/OnlyBossMoviesGroup'),
-                    InlineKeyboardButton(' ✪ ᴄʜᴀɴɴᴇʟ ✪ ', url=https://t.me/OveshBossOfficial')
-               ],[
-                    InlineKeyboardButton(' ❂ ʜᴇʟᴘ ❂', callback_data='help'),
-                    InlineKeyboardButton(' ❂ ᴀʙᴏᴜᴛ ❂', callback_data='about')
-                ],[
-                    InlineKeyboardButton('🎖️ ᴛᴏᴘ sᴇᴀʀᴄʜɪɴɢ ', callback_data="topsearch"),
-                    InlineKeyboardButton('🔹 ᴜᴘɢʀᴀᴅᴇ', callback_data="premium_info"),
-                ]]
-        reply_markup = InlineKeyboardMarkup(buttons)
-        current_time = datetime.now(pytz.timezone(TIMEZONE))
-        curr_time = current_time.hour        
-        if curr_time < 12:
-            gtxt = "ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ 🌞" 
-        elif curr_time < 17:
-            gtxt = "ɢᴏᴏᴅ ᴀғᴛᴇʀɴᴏᴏɴ 🌓" 
-        elif curr_time < 21:
-            gtxt = "ɢᴏᴏᴅ ᴇᴠᴇɴɪɴɢ 🌘"
-        else:
-            gtxt = "ɢᴏᴏᴅ ɴɪɢʜᴛ 🌑"
-        m=await message.reply_text("⏳")
-        await asyncio.sleep(0.4)
-        await m.delete()        
-        await message.reply_photo(
-            photo=random.choice(PICS),
-            caption=script.START_TXT.format(message.from_user.mention, gtxt, temp.U_NAME, temp.B_NAME),
-            reply_markup=reply_markup,
-            parse_mode=enums.ParseMode.HTML
-        )
-        return
+                   InlineKeyboardButton(
+                    '❤️ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ ❤️',
+                    url=f'https://t.me/{temp.U_NAME}?startgroup=true'
+                )
+            ],
+            [
+                InlineKeyboardButton('🍁 Update Channel 🍁', url=UPDATE_CHNL_LNK)
+            ]
+        ]
 
-    if len(message.command) == 2 and message.command[1] in ["subscribe", "error", "okay", "help"]:
-        buttons = [[
-                    InlineKeyboardButton('✦ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ ✦', url=f'http://t.me/{temp.U_NAME}?startgroup=true')
-                ],[
-                    InlineKeyboardButton('  ✪ ɢʀᴏᴜᴘ ✪ ', url=https://t.me/OnlyBossMoviesGroup'),
-                    InlineKeyboardButton(' ✪ ᴄʜᴀɴɴᴇʟ ✪ ', url=https://t.me/OveshBossOfficial')
-               ],[
-                    InlineKeyboardButton(' ❂ ʜᴇʟᴘ ❂', callback_data='help'),
-                    InlineKeyboardButton(' ❂ ᴀʙᴏᴜᴛ ❂', callback_data='about')
-                ],[
-                    InlineKeyboardButton('🎖️ ᴛᴏᴘ sᴇᴀʀᴄʜɪɴɢ ', callback_data="topsearch"),
-                    InlineKeyboardButton('🔹 ᴜᴘɢʀᴀᴅᴇ', callback_data="premium_info"),
-                ]]
-        reply_markup = InlineKeyboardMarkup(buttons)
-        current_time = datetime.now(pytz.timezone(TIMEZONE))
-        curr_time = current_time.hour        
-        if curr_time < 12:
-            gtxt = "ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ 🌞" 
-        elif curr_time < 17:
-            gtxt = "ɢᴏᴏᴅ ᴀғᴛᴇʀɴᴏᴏɴ 🌓" 
-        elif curr_time < 21:
-            gtxt = "ɢᴏᴏᴅ ᴇᴠᴇɴɪɴɢ 🌘"
-        else:
-            gtxt = "ɢᴏᴏᴅ ɴɪɢʜᴛ 🌑"
-        m=await message.reply_text("⏳")
-        await asyncio.sleep(0.4)
-        await m.delete()        
-        await message.reply_photo(
-            photo=random.choice(PICS),
-            caption=script.START_TXT.format(message.from_user.mention, gtxt, temp.U_NAME, temp.B_NAME),
-
-        )
+        await message.reply(
+            script.GSTART_TXT.format(
+                message.from_user.mention if message.from_user else message.chat.title,
+                temp.U_NAME,
+                temp.B_NAME
+            ),
+            reply_markup=InlineKeyboardMarkup(buttons),
+            disable_web_page_preview=True
         )
         return
+
+    if len(message.command) == 1:
+        buttons = [
+            [
+                InlineKeyboardButton(
+                    '✦ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ ✦',
+                    url=f'https://t.me/{temp.U_NAME}?startgroup=true'
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    ' ✪ ɢʀᴏᴜᴘ ✪ ',
+                    url='https://t.me/OnlyBossMoviesGroup'
+                ),
+                InlineKeyboardButton(
+                    ' ✪ ᴄʜᴀɴɴᴇʟ ✪ ',
+                    url='https://t.me/OveshBossOfficial'
+                )
+            ],
+            [
+                InlineKeyboardButton(' ❂ ʜᴇʟᴘ ❂', callback_data='help'),
+                InlineKeyboardButton(' ❂ ᴀʙᴏᴜᴛ ❂', callback_data='about')
+            ],
+            [
+                InlineKeyboardButton('🎖️ ᴛᴏᴘ sᴇᴀʀᴄʜɪɴɢ', callback_data='topsearch'),
+                InlineKeyboardButton('🔹 ᴜᴘɢʀᴀᴅᴇ', callback_data='premium_info')
+            ]
+        ]
+
+        current_time = datetime.now(pytz.timezone(TIMEZONE)).hour
+        if current_time < 12:
+            gtxt = "ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ 🌞"
+        elif current_time < 17:
+            gtxt = "ɢᴏᴏᴅ ᴀғᴛᴇʀɴᴏᴏɴ 🌓"
+        elif current_time < 21:
+            gtxt = "ɢᴏᴏᴅ ᴇᴠᴇɴɪɴɢ 🌘"
+        else:
+            gtxt = "ɢᴏᴏᴅ ɴɪɢʜᴛ 🌑"
+
+        await message.reply_photo(
+            photo=random.choice(PICS),
+            caption=script.START_TXT.format(
+                message.from_user.mention,
+                gtxt,
+                temp.U_NAME,
+                temp.B_NAME
+            ),
+            reply_markup=InlineKeyboardMarkup(buttons),
+            parse_mode=enums.ParseMode.HTML
+        )
+        return
+
     if message.command[1].startswith("reff_"):
         try:
             user_id = int(message.command[1].split("_")[1])
