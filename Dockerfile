@@ -1,16 +1,19 @@
-FROM python:3.12.2
+FROM python:3.9-slim
 
+# ------------------ yeh line add karo ------------------
 RUN apt-get update && \
     apt-get install -y --no-install-recommends git && \
-    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-WORKDIR /DreamxBotz
+WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip --root-user-action=ignore && \
-    pip install --no-cache-dir -r requirements.txt --root-user-action=ignore
+COPY repo /app
 
-COPY . .
+# Optional: upgrade pip (better practice)
+RUN python -m pip install --upgrade pip
 
-CMD ["python3", "bot.py"]
+RUN if [ -f "/app/requirements.txt" ]; then pip install --no-cache-dir -r /app/requirements.txt; fi
+
+# Baaki commands jo aapke pass hain (CMD, ENV etc.)
+# Example:
+# CMD ["python", "bot.py"]
